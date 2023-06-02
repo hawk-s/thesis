@@ -122,3 +122,46 @@ Notes:
 [2] The condition number is large, 8.96e+03. This might indicate that there are
 strong multicollinearity or other numerical problems.
 '''
+df['localities_rate'] = df['localities_rate']*100
+from E_fctn_display_unique_values import display_unique_values
+print(display_unique_values(df, 'localities_rate'))
+#probably transfer it to squared km... i.e. times 100...
+
+
+
+#so, with the square kms:
+model4 = ols_analysis(df, target_col='finds_rate', feature_cols=['real_net_monetary_index','men_proportion', '65+_proportion', 'detector_expensive_dummy','localities_rate'])
+print(model4)
+'''
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:             finds_rate   R-squared:                       0.005
+Model:                            OLS   Adj. R-squared:                  0.003
+Method:                 Least Squares   F-statistic:                     3.446
+Date:                Fri, 02 Jun 2023   Prob (F-statistic):            0.00414
+Time:                        17:51:55   Log-Likelihood:                 3800.2
+No. Observations:                3651   AIC:                            -7588.
+Df Residuals:                    3645   BIC:                            -7551.
+Df Model:                           5
+Covariance Type:            nonrobust
+============================================================================================       
+                               coef    std err          t      P>|t|      [0.025      0.975]       
+--------------------------------------------------------------------------------------------       
+const                        0.0657      0.118      0.556      0.578      -0.166       0.297       
+real_net_monetary_index     -0.0110      0.021     -0.532      0.595      -0.052       0.030       
+men_proportion              -0.0690      0.229     -0.301      0.763      -0.518       0.380       
+65+_proportion              -0.0437      0.100     -0.435      0.664      -0.241       0.153       
+detector_expensive_dummy     0.0432      0.011      4.006      0.000       0.022       0.064       
+localities_rate              0.0689      0.084      0.821      0.412      -0.096       0.234       
+==============================================================================
+Omnibus:                     5152.768   Durbin-Watson:                   2.014
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):          1066991.724
+Skew:                           8.453   Prob(JB):                         0.00
+Kurtosis:                      85.025   Cond. No.                         275.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified. 
+'''
+
+
