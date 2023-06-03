@@ -5,7 +5,7 @@ df = load_excel_to_dataframe('M_main_dataset.xlsx')
 
 #print(df.columns)
 
-
+df_copy_1 = df.copy()
 
 #subset the dataframe to non none values in the real index column:
 from N_fctn_subset_non_none import subset_non_none_values
@@ -182,7 +182,7 @@ Notes:
 
 # Display the correlation matrix
 correlation_matrix = df[['finds_rate','real_net_monetary_index','men_proportion', '65+_proportion', 'detector_expensive_dummy','localities_rate']].corr()
-print(correlation_matrix)
+#print(correlation_matrix)
 
 #output:
 '''
@@ -227,3 +227,222 @@ Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 '''
 #so, now, the data sampling chapterr
+
+
+#print(df.columns)
+
+# Assuming 'df' is your DataFrame
+columns = ['link', 'experience', 'contributions', 'comments', 'artifacts', 'coins',
+           'residence_additional_info', 'real_net_monetary_index', 'finds_rate',
+           'coins_rate', 'detector_expensive_dummy', 'localities_rate']
+
+correlation_matrix = df[columns].corr()
+
+#print(correlation_matrix)
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+plt.figure(figsize=(10, 8))
+sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", linewidths=0.5,  vmin=-1, vmax=1)
+plt.title('Correlation Matrix')
+#plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#ANALYSIS FOR COINS RATE (according to the correlation matrix):
+
+df_copy_1 = subset_non_none_values(df_copy_1,column='real_net_monetary_index')
+#print(df)
+
+df_copy_1 = subset_non_none_values(df_copy_1,column='coins_rate') 
+#print(df)
+
+modelc1 = ols_analysis(df_copy_1, target_col='coins_rate', feature_cols=['real_net_monetary_index','men_proportion', '65+_proportion'] )
+#print(modelc1)
+print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+'''
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:             coins_rate   R-squared:                       0.001
+Model:                            OLS   Adj. R-squared:                 -0.000
+Method:                 Least Squares   F-statistic:                    0.6073
+Date:                Sat, 03 Jun 2023   Prob (F-statistic):              0.610
+Time:                        15:43:47   Log-Likelihood:                 4416.3
+No. Observations:                2765   AIC:                            -8825.
+Df Residuals:                    2761   BIC:                            -8801.
+Df Model:                           3
+Covariance Type:            nonrobust
+===========================================================================================
+                              coef    std err          t      P>|t|      [0.025      0.975]
+-------------------------------------------------------------------------------------------
+const                       0.0781      0.079      0.987      0.324      -0.077       0.233
+real_net_monetary_index     0.0113      0.013      0.852      0.394      -0.015       0.037
+men_proportion             -0.1707      0.152     -1.120      0.263      -0.469       0.128
+65+_proportion             -0.0048      0.067     -0.071      0.943      -0.136       0.127
+==============================================================================
+Omnibus:                     5462.790   Durbin-Watson:                   2.016
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):          9323371.638
+Skew:                          15.762   Prob(JB):                         0.00
+Kurtosis:                     285.723   Cond. No.                         278.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+'''
+
+
+
+modelc2 = ols_analysis(df_copy_1, target_col='coins_rate', feature_cols=['real_net_monetary_index','men_proportion', '65+_proportion', 'link', 'detector_expensive_dummy'] )
+#print(modelc2)
+print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+'''
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:             coins_rate   R-squared:                       0.018
+Model:                            OLS   Adj. R-squared:                  0.017
+Method:                 Least Squares   F-statistic:                     10.32
+Date:                Sat, 03 Jun 2023   Prob (F-statistic):           8.04e-10
+Time:                        15:43:47   Log-Likelihood:                 4441.0
+No. Observations:                2765   AIC:                            -8870.
+Df Residuals:                    2759   BIC:                            -8834.
+Df Model:                           5
+Covariance Type:            nonrobust
+============================================================================================
+                               coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------------
+const                        0.0564      0.079      0.719      0.472      -0.098       0.210
+real_net_monetary_index      0.0104      0.013      0.797      0.425      -0.015       0.036
+men_proportion              -0.1250      0.151     -0.826      0.409      -0.422       0.172
+65+_proportion              -0.0120      0.067     -0.181      0.857      -0.142       0.118
+link                         0.0233      0.005      4.562      0.000       0.013       0.033
+detector_expensive_dummy     0.0336      0.007      5.110      0.000       0.021       0.047
+==============================================================================
+Omnibus:                     5439.616   Durbin-Watson:                   2.008
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):          9277299.939
+Skew:                          15.604   Prob(JB):                         0.00
+Kurtosis:                     285.050   Cond. No.                         279.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+'''
+
+
+modelc3 = ols_analysis(df_copy_1, target_col='coins_rate', feature_cols=['real_net_monetary_index','men_proportion', '65+_proportion', 'link', 'detector_expensive_dummy', 'contributions', 'comments'] )
+#print(modelc3)
+print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+
+'''
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:             coins_rate   R-squared:                       0.019
+Model:                            OLS   Adj. R-squared:                  0.017
+Method:                 Least Squares   F-statistic:                     7.806
+Date:                Sat, 03 Jun 2023   Prob (F-statistic):           2.19e-09
+Time:                        15:43:47   Log-Likelihood:                 4442.5
+No. Observations:                2765   AIC:                            -8869.
+Df Residuals:                    2757   BIC:                            -8822.
+Df Model:                           7
+Covariance Type:            nonrobust
+============================================================================================
+                               coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------------
+const                        0.0544      0.079      0.693      0.488      -0.100       0.208
+real_net_monetary_index      0.0094      0.013      0.721      0.471      -0.016       0.035
+men_proportion              -0.1191      0.151     -0.787      0.431      -0.416       0.178
+65+_proportion              -0.0126      0.067     -0.190      0.849      -0.143       0.118
+link                         0.0223      0.005      4.330      0.000       0.012       0.032
+detector_expensive_dummy     0.0327      0.007      4.922      0.000       0.020       0.046
+contributions             2.206e-05   3.41e-05      0.647      0.518   -4.48e-05    8.89e-05
+comments                  1.647e-06   1.44e-06      1.145      0.252   -1.17e-06    4.47e-06
+==============================================================================
+Omnibus:                     5439.473   Durbin-Watson:                   2.011
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):          9262287.770
+Skew:                          15.604   Prob(JB):                         0.00
+Kurtosis:                     284.819   Cond. No.                     1.36e+05
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 1.36e+05. This might indicate that there are
+strong multicollinearity or other numerical problems.
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#ANALYSIS FOR ARTIF RATE BUT ACCORDING TO THE CORRELATION MATRIX:
+model_corr_1 = ols_analysis(df, target_col='finds_rate', feature_cols=['real_net_monetary_index','men_proportion', '65+_proportion', 'detector_expensive_dummy', 'link', 'residence_additional_info'] )
+#print(model_corr_1)
+print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+
+'''
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:             finds_rate   R-squared:                       0.014
+Model:                            OLS   Adj. R-squared:                  0.013
+Method:                 Least Squares   F-statistic:                     8.879
+Date:                Sat, 03 Jun 2023   Prob (F-statistic):           1.22e-09
+Time:                        15:58:51   Log-Likelihood:                 3818.1
+No. Observations:                3651   AIC:                            -7622.
+Df Residuals:                    3644   BIC:                            -7579.
+Df Model:                           6
+Covariance Type:            nonrobust
+=============================================================================================
+                                coef    std err          t      P>|t|      [0.025      0.975]
+---------------------------------------------------------------------------------------------
+const                         0.0530      0.117      0.452      0.651      -0.177       0.283
+real_net_monetary_index      -0.0108      0.020     -0.540      0.590      -0.050       0.028
+men_proportion               -0.0410      0.227     -0.181      0.857      -0.486       0.404
+65+_proportion               -0.0498      0.100     -0.498      0.618      -0.246       0.146
+detector_expensive_dummy      0.0419      0.011      3.892      0.000       0.021       0.063
+link                          0.0320      0.008      3.882      0.000       0.016       0.048
+residence_additional_info     0.0813      0.019      4.350      0.000       0.045       0.118
+==============================================================================
+Omnibus:                     5101.564   Durbin-Watson:                   2.017
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):          1014449.397
+Skew:                           8.306   Prob(JB):                         0.00
+Kurtosis:                      82.954   Cond. No.                         273.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+'''
+
+
+#so the models so far nothing special...
+#now, create models for real net monetary index filled with 1 if None... but what with the people that does not have any submitted find/coin... I suggest to again split the analysis
+#and do it for 0s filled (i.e. for all the people) and then remove those artifs and coins Na's---
+
