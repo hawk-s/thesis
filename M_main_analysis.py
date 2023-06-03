@@ -14,7 +14,7 @@ df = subset_non_none_values(df,column='real_net_monetary_index')
 #print(df)
 
 df = subset_non_none_values(df,column='finds_rate') 
-print(df)
+#print(df)
 
 from N_fctn_OLS import ols_analysis
 model1 = ols_analysis(df, target_col='finds_rate', feature_cols=['real_net_monetary_index','men_proportion', '65+_proportion'] )
@@ -122,16 +122,31 @@ Notes:
 [2] The condition number is large, 8.96e+03. This might indicate that there are
 strong multicollinearity or other numerical problems.
 '''
+
+#correlation_matrix = df[['real_net_monetary_index','men_proportion', '65+_proportion', 'detector_expensive_dummy','localities_rate']].corr()
+#print(correlation_matrix)
+##I dont think there is multicollinearity, see:
+'''
+                          real_net_monetary_index  men_proportion  65+_proportion  detector_expensive_dummy  localities_rate
+real_net_monetary_index                  1.000000        0.125307       -0.197997                  0.017191         0.252678
+men_proportion                           0.125307        1.000000       -0.192306                 -0.028418        -0.076486
+65+_proportion                          -0.197997       -0.192306        1.000000                  0.006766        -0.048912
+detector_expensive_dummy                 0.017191       -0.028418        0.006766                  1.000000         0.018067
+localities_rate                          0.252678       -0.076486       -0.048912                  0.018067         1.000000
+'''
+
+
+
 df['localities_rate'] = df['localities_rate']*100
 from E_fctn_display_unique_values import display_unique_values
-print(display_unique_values(df, 'localities_rate'))
+#print(display_unique_values(df, 'localities_rate'))
 #probably transfer it to squared km... i.e. times 100...
 
 
 
 #so, with the square kms:
 model4 = ols_analysis(df, target_col='finds_rate', feature_cols=['real_net_monetary_index','men_proportion', '65+_proportion', 'detector_expensive_dummy','localities_rate'])
-print(model4)
+#print(model4)
 '''
                             OLS Regression Results
 ==============================================================================
@@ -165,3 +180,50 @@ Notes:
 '''
 
 
+# Display the correlation matrix
+correlation_matrix = df[['finds_rate','real_net_monetary_index','men_proportion', '65+_proportion', 'detector_expensive_dummy','localities_rate']].corr()
+print(correlation_matrix)
+
+#output:
+'''
+                          finds_rate  real_net_monetary_index  men_proportion  65+_proportion  detector_expensive_dummy  localities_rate
+finds_rate                  1.000000                -0.003782       -0.007828       -0.004851                  0.066426         0.013718
+real_net_monetary_index    -0.003782                 1.000000        0.125307       -0.197997                  0.017191         0.252678
+men_proportion             -0.007828                 0.125307        1.000000       -0.192306                 -0.028418        -0.076486
+65+_proportion             -0.004851                -0.197997       -0.192306        1.000000                  0.006766        -0.048912
+detector_expensive_dummy    0.066426                 0.017191       -0.028418        0.006766                  1.000000         0.018067
+localities_rate             0.013718                 0.252678       -0.076486       -0.048912                  0.018067         1.000000
+'''
+
+#model, just try the localities rate a net net_monetary...:
+
+model_try1 = ols_analysis(df, target_col='real_net_monetary_index', feature_cols=['localities_rate'])
+#print(model_try1)
+'''
+                               OLS Regression Results
+===================================================================================
+Dep. Variable:     real_net_monetary_index   R-squared:                       0.064
+Model:                                 OLS   Adj. R-squared:                  0.064
+Method:                      Least Squares   F-statistic:                     248.9
+Date:                     Sat, 03 Jun 2023   Prob (F-statistic):           2.75e-54
+Time:                             11:51:32   Log-Likelihood:                 4525.0
+No. Observations:                     3651   AIC:                            -9046.
+Df Residuals:                         3649   BIC:                            -9034.
+Df Model:                                1
+Covariance Type:                 nonrobust
+===================================================================================
+                      coef    std err          t      P>|t|      [0.025      0.975]
+-----------------------------------------------------------------------------------
+const               0.9761      0.002    508.781      0.000       0.972       0.980
+localities_rate     1.0430      0.066     15.775      0.000       0.913       1.173
+==============================================================================
+Omnibus:                      119.621   Durbin-Watson:                   0.018
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              111.649
+Skew:                           0.380   Prob(JB):                     5.70e-25
+Kurtosis:                       2.604   Cond. No.                         57.0
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+'''
+#so, now, the data sampling chapterr
